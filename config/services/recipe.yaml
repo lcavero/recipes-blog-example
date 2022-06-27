@@ -1,0 +1,11 @@
+services:
+
+    App\Recipe\Infrastructure\Repository\RecipeORMRepository: 
+        arguments: ['@Doctrine\Common\Persistence\ManagerRegistry']
+        
+    App\Recipe\Domain\Repository\RecipeRepository: '@App\Recipe\Infrastructure\Repository\RecipeORMRepository'
+
+    App\Recipe\Infrastructure\Controller\:
+        resource: '../../src/Recipe/Infrastructure/Controller/'
+        autowire: true
+        tags: ['controller.service_arguments']

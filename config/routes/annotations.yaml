@@ -1,3 +1,7 @@
 applicationstatus:
     resource: ../../src/ApplicationStatus/Infrastructure/Controller/
     type: annotation
+
+recipe:
+    resource: ../../src/Recipe/Infrastructure/Controller/
+    type: annotation
