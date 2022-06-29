@@ -25,6 +25,10 @@ services:
         arguments: ['@query.bus']
     App\Shared\Infrastructure\CQRS\QueryBus: '@App\Shared\Infrastructure\CQRS\MessengerQueryBus'
 
+    App\Shared\Infrastructure\CQRS\MessengerEventBus:
+        arguments: [ '@event.bus' ]
+    App\Shared\Infrastructure\CQRS\EventBus: '@App\Shared\Infrastructure\CQRS\MessengerEventBus'
+
     # Event Listener
     App\Shared\Infrastructure\EventListener\HttpExceptionListener:
         autowire: true

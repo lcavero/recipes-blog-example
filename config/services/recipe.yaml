@@ -29,3 +29,6 @@ services:
     App\Recipe\Application\Command\CreateRecipeCommandHandler: ~
     App\Recipe\Application\Query\GetRecipeQueryHandler: ~
     App\Recipe\Application\Query\GetRecipesQueryHandler: ~
+    
+    App\Recipe\Application\Service\RecipeCreator:
+        autowire: true
