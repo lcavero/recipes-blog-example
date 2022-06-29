@@ -2,10 +2,17 @@
 
 namespace App\Shared\Domain\ValueObject;
 
+use Webmozart\Assert\Assert;
+
 class Id
 {
-    private function __construct(private string $id)
-    {}
+    private string $id;
+
+    private function __construct(string $id)
+    {
+        Assert::lengthBetween($id, 1, 255);
+        $this->id = $id;
+    }
 
     public static function fromString(string $id): static
     {

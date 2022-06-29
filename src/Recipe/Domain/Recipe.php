@@ -2,6 +2,8 @@
 
 namespace App\Recipe\Domain;
 
+use Webmozart\Assert\Assert;
+
 class Recipe
 {
     private string $id;
@@ -9,6 +11,8 @@ class Recipe
 
     private function __construct(RecipeId $recipeId, string $name)
     {
+        Assert::lengthBetween($name, 1, 255);
+
         $this->id = $recipeId->value();
         $this->name = $name;
     }
