@@ -14,6 +14,29 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
+    # SHARED SERVICES __________________________________________________________________________________________________
+
+    # Command Bus
+    App\Shared\Infrastructure\CQRS\MessengerCommandBus:
+        arguments: ['@command.bus']
+    App\Shared\Infrastructure\CQRS\CommandBus: '@App\Shared\Infrastructure\CQRS\MessengerCommandBus'
+    
+    App\Shared\Infrastructure\CQRS\MessengerQueryBus:
+        arguments: ['@query.bus']
+    App\Shared\Infrastructure\CQRS\QueryBus: '@App\Shared\Infrastructure\CQRS\MessengerQueryBus'
+
+    # Event Listener
+    App\Shared\Infrastructure\EventListener\HttpExceptionListener:
+        autowire: true
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }
+        
+    App\Shared\Infrastructure\EventListener\JsonRequestParserRequestListener:
+        autowire: true
+        tags:
+            - { name: kernel.event_listener, event: kernel.request }
+
+
 
 imports:
     - { resource: services/ }

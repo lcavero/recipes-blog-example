@@ -1,11 +1,31 @@
 services:
-
-    App\Recipe\Infrastructure\Repository\RecipeORMRepository: 
-        arguments: ['@Doctrine\Common\Persistence\ManagerRegistry']
-        
+    
+    # Domain    
     App\Recipe\Domain\Repository\RecipeRepository: '@App\Recipe\Infrastructure\Repository\RecipeORMRepository'
+    App\Recipe\Domain\Service\RecipeFinder:
+        autowire: true
 
+    # Presentation
     App\Recipe\Infrastructure\Controller\:
         resource: '../../src/Recipe/Infrastructure/Controller/'
         autowire: true
         tags: ['controller.service_arguments']
+
+    # Persistence
+    App\Recipe\Infrastructure\Repository\RecipeORMRepository:
+        autowire: true
+
+    #  CQRS
+    _instanceof:
+        App\Shared\Infrastructure\CQRS\CommandHandler:
+            autowire: true
+            tags:
+                - { name: messenger.message_handler, bus: command.bus }
+        App\Shared\Infrastructure\CQRS\QueryHandler:
+            autowire: true
+            tags:
+                - { name: messenger.message_handler, bus: query.bus }
+                
+    App\Recipe\Application\Command\CreateRecipeCommandHandler: ~
+    App\Recipe\Application\Query\GetRecipeQueryHandler: ~
+    App\Recipe\Application\Query\GetRecipesQueryHandler: ~
