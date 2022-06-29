@@ -36,6 +36,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.request }
 
+    # Serializer
+    
+    App\Shared\Infrastructure\Serializer\AppSerializerFactory: ~
+    App\Shared\Infrastructure\Serializer\AppSerializer:
+        autowire: true
+        
+    App\Shared\Infrastructure\Serializer\Serializer: '@App\Shared\Infrastructure\Serializer\AppSerializer'
 
 
 imports:

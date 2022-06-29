@@ -10,35 +10,50 @@ use App\Shared\Domain\Exception\MessageValidationException;
 use App\Shared\Infrastructure\CQRS\CommandBus;
 use App\Shared\Infrastructure\CQRS\QueryBus;
 use App\Shared\Infrastructure\Exception\BadRequestHttpException;
+use App\Shared\Infrastructure\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Uid\Uuid;
 
 #[Route('/api/recipes', name: 'recipes_')]
 class RecipeApiController
 {
-    public function __construct(private QueryBus $queryBus, private CommandBus $commandBus)
+    public function __construct(
+        private QueryBus $queryBus,
+        private CommandBus $commandBus,
+        private Serializer $serializer
+    )
     {}
 
     #[Route('/list', name: 'list', methods: ['GET'])]
     public function list(): JsonResponse
     {
-        return new JsonResponse($this->queryBus->handle(
+        $recipes = $this->queryBus->handle(
             GetRecipesQuery::create()
-        ), Response::HTTP_OK);
+        );
+
+        return  JsonResponse::fromJsonString(
+            $this->serializer->serialize($recipes, JsonEncoder::FORMAT),
+            Response::HTTP_OK
+        );
     }
 
     #[Route('/view/{id}', name: 'view', methods: ['GET'])]
-    public function one(string $id): JsonResponse
+    public function one(string $id): Response
     {
         try {
             $recipe = $this->queryBus->handle(
                 GetRecipeQuery::create($id)
             );
-            return new JsonResponse($recipe, Response::HTTP_OK);
+
+            return JsonResponse::fromJsonString(
+                $this->serializer->serialize($recipe, JsonEncoder::FORMAT),
+                Response::HTTP_OK
+            );
         } catch (RecipeNotFoundException $e) {
             throw new HttpException(Response::HTTP_BAD_REQUEST, $e->getMessage());
         }
