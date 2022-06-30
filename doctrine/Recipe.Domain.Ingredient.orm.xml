@@ -4,16 +4,15 @@
                   xsi:schemaLocation="https://doctrine-project.org/schemas/orm/doctrine-mapping
                           https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="App\Recipe\Domain\Recipe" table="recipe">
+    <entity name="App\Recipe\Domain\Ingredient" table="ingredient">
 
         <id name="id" type="string" column="id">
             <generator strategy="NONE"/>
         </id>
 
-        <field name="name" column="name" type="string" length="255" nullable="false" unique="false" />
-        <field name="description" column="description" type="string" length="1000" nullable="true" unique="false" />
+        <field name="description" column="description" type="string" length="255" nullable="false" unique="false" />
 
-        <one-to-many field="ingredients" target-entity="Ingredient" mapped-by="recipe" />
+        <many-to-one field="recipe" target-entity="Recipe" />
     </entity>
 
 </doctrine-mapping>

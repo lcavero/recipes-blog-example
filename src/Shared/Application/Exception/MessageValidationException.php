@@ -1,19 +1,25 @@
 <?php
 
-namespace App\Shared\Domain\Exception;
+namespace App\Shared\Application\Exception;
 
-use DomainException;
+use App\Shared\Domain\Exception\ValidationException;
+use Exception;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
-class MessageValidationException extends DomainException
+class MessageValidationException extends Exception implements ValidationException
 {
     private ConstraintViolationListInterface $violations;
 
-    public function __construct(ConstraintViolationListInterface $violations)
+    private function __construct(ConstraintViolationListInterface $violations)
     {
         $this->violations = $violations;
         parent::__construct('Message validation failed.');
+    }
+
+    public static function fromViolations(ConstraintViolationListInterface $violations): static
+    {
+        return new static($violations);
     }
 
     public function getMessages(): array

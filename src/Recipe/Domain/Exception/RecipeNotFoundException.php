@@ -3,9 +3,9 @@
 namespace App\Recipe\Domain\Exception;
 
 use App\Recipe\Domain\RecipeId;
-use Exception;
+use App\Shared\Domain\Exception\DomainException;
 
-class RecipeNotFoundException extends Exception
+class RecipeNotFoundException extends DomainException
 {
     private function __construct(string $message)
     {
@@ -14,6 +14,6 @@ class RecipeNotFoundException extends Exception
 
     public static function fromRecipeId(RecipeId $recipeId): static
     {
-        return new static(sprintf('The Recipe with id "%s" was not found', $recipeId->value()));
+        return new static(sprintf('The Recipe with id "%s" was not found', $recipeId->toString()));
     }
 }

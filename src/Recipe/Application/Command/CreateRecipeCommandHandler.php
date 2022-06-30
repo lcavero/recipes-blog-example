@@ -12,6 +12,6 @@ class CreateRecipeCommandHandler implements CommandHandler
 
     public function __invoke(CreateRecipeCommand $command): void
     {
-        $this->recipeCreator->create($command->recipeId(), $command->name());
+        $this->recipeCreator->create($command->recipeId(), $command->name(), $command->description());
     }
 }

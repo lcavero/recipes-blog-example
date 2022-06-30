@@ -3,10 +3,9 @@
 namespace App\Recipe\Application\Command;
 
 use App\Recipe\Domain\RecipeId;
-use App\Shared\Domain\Validation\MessageValidationTrait;
+use App\Shared\Application\Validation\MessageValidationTrait;
 use App\Shared\Infrastructure\CQRS\Command;
 use Symfony\Component\Validator\Constraints as Assert;
-
 
 class CreateRecipeCommand implements Command
 {
@@ -37,16 +36,18 @@ class CreateRecipeCommand implements Command
         return $this->payload['name'];
     }
 
-    protected function validationConstrains() : Assert\Collection
+    public function description(): ?string
+    {
+        return $this->payload['description'] ?? null;
+    }
+
+    private function validationConstrains() : Assert\Collection
     {
         return new Assert\Collection([
             'name' => [
                 new Assert\NotBlank(),
-                new Assert\Length([
-                    'min' => 5,
-                    'max' => 255
-                ]),
             ],
+            'description' => []
         ]);
     }
 }

@@ -16,10 +16,6 @@ class HttpExceptionListener
 
     public function onKernelException(ExceptionEvent $event)
     {
-        if ('prod' !== $this->kernel->getEnvironment()) {
-            return;
-        }
-
         $exception = $event->getThrowable();
 
         if ($exception instanceof HttpExceptionInterface) {
@@ -32,6 +28,21 @@ class HttpExceptionListener
 
             if ($exception instanceof BadRequestHttpException) {
                 $content['errors'] = $exception->errors();
+            }
+
+            if ('dev' === $this->kernel->getEnvironment()) {
+                $content['exception'] = [
+                    'name' => get_class($exception),
+                    'file' => $exception->getFile(),
+                    'line' => $exception->getLine(),
+                    'previous' => $exception->getPrevious() ? [
+                        'name' => get_class($exception->getPrevious()),
+                        'file' => $exception->getPrevious()->getFile(),
+                        'line' => $exception->getPrevious()->getLine(),
+                        'trace' => $exception->getPrevious()->getTrace()
+                    ] : null,
+                    'trace' => $exception->getTrace()
+                ];
             }
 
             $response->setContent(json_encode($content));

@@ -10,9 +10,9 @@ class GetRecipeQueryHandler implements QueryHandler
     public function __construct(private RecipeFinder $recipeFinder)
     {}
 
-    public function __invoke(GetRecipeQuery $query): RecipeDTO
+    public function __invoke(GetRecipeQuery $query): RecipeViewDTO
     {
-        return RecipeDTO::fromEntity(
+        return RecipeViewDTO::fromEntity(
             $this->recipeFinder->findById($query->recipeId())
         );
     }

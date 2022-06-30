@@ -4,14 +4,14 @@ namespace App\Recipe\Application\Query;
 
 use App\Recipe\Domain\Recipe;
 
-class RecipeDTO
+class RecipeListDTO
 {
     private function __construct(private string $id, private string $name)
     {}
 
     public static function fromEntity(Recipe $recipe): static
     {
-        return new static($recipe->id()->value(), $recipe->name());
+        return new static($recipe->id()->toString(), $recipe->name());
     }
 
     public function id(): string

@@ -12,11 +12,12 @@ class RecipeCreator
     public function __construct(private RecipeRepository $repository, private EventBus $eventBus)
     {}
 
-    public function create(RecipeId $recipeId, string $name)
+    public function create(RecipeId $recipeId, string $name, ?string $description)
     {
         $recipe = Recipe::create(
             $recipeId,
-            $name
+            $name,
+            $description
         );
 
         $this->repository->create(

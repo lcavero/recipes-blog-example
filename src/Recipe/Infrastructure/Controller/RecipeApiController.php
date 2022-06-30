@@ -6,7 +6,7 @@ use App\Recipe\Application\Command\CreateRecipeCommand;
 use App\Recipe\Application\Query\GetRecipeQuery;
 use App\Recipe\Application\Query\GetRecipesQuery;
 use App\Recipe\Domain\Exception\RecipeNotFoundException;
-use App\Shared\Domain\Exception\MessageValidationException;
+use App\Shared\Domain\Identity\IdFactory;
 use App\Shared\Infrastructure\CQRS\CommandBus;
 use App\Shared\Infrastructure\CQRS\QueryBus;
 use App\Shared\Infrastructure\Exception\BadRequestHttpException;
@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Uid\Uuid;
+use App\Shared\Domain\Exception\ValidationException;
 
 #[Route('/api/recipes', name: 'recipes_')]
 class RecipeApiController
@@ -55,27 +55,27 @@ class RecipeApiController
                 Response::HTTP_OK
             );
         } catch (RecipeNotFoundException $e) {
-            throw new HttpException(Response::HTTP_BAD_REQUEST, $e->getMessage());
+            throw new HttpException(Response::HTTP_BAD_REQUEST, $e->getMessage(), $e);
         }
     }
 
     #[Route('/new', name: 'create', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
-        $recipeId = Uuid::v4()->toBase32();
+        $recipeId = IdFactory::create();
 
         try {
             $this->commandBus->dispatch(
                 CreateRecipeCommand::create(
-                    $recipeId,
+                    $recipeId->toString(),
                     $request->request->all()
                 )
             );
 
-        } catch (MessageValidationException $e) {
-            throw BadRequestHttpException::fromErrors($e->getMessages());
+        } catch (ValidationException $e) {
+            throw BadRequestHttpException::fromErrors($e->getMessages(), $e);
         }
 
-        return new JsonResponse(['id' => $recipeId], Response::HTTP_ACCEPTED);
+        return new JsonResponse(['id' => $recipeId->toString()], Response::HTTP_ACCEPTED);
     }
 }

@@ -22,7 +22,7 @@ class RecipeORMRepository extends ServiceEntityRepository implements RecipeRepos
 
     public function findOne(RecipeId $recipeId): ?Recipe
     {
-        return $this->find($recipeId->value());
+        return $this->find($recipeId->toString());
     }
 
     public function create(Recipe $recipe): void
