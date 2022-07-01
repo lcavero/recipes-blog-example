@@ -10,4 +10,5 @@ interface RecipeRepository
     public function findAll(): array;
     public function findOne(RecipeId $recipeId): ?Recipe;
     public function create(Recipe $recipe): void;
+    public function update(Recipe $recipe): void;
 }

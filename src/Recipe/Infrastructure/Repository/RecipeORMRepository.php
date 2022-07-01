@@ -29,4 +29,9 @@ class RecipeORMRepository extends ServiceEntityRepository implements RecipeRepos
     {
         $this->_em->persist($recipe);
     }
+
+    public function update(Recipe $recipe): void
+    {
+        return;
+    }
 }

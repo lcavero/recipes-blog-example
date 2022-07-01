@@ -7,7 +7,7 @@ use App\Shared\Application\Validation\MessageValidationTrait;
 use App\Shared\Infrastructure\CQRS\Command;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class CreateRecipeCommand implements Command
+class UpdateRecipeCommand implements Command
 {
     use MessageValidationTrait;
 

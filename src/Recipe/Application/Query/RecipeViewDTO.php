@@ -7,7 +7,12 @@ use App\Recipe\Domain\Recipe;
 
 class RecipeViewDTO
 {
-    private function __construct(private string $id, private string $name, private ?string $description, private array $ingredients)
+    private function __construct(
+        private string $id,
+        private string $name,
+        private ?string $description,
+        private array $ingredients
+    )
     {}
 
     public static function fromEntity(Recipe $recipe): static

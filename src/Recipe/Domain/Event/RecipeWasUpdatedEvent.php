@@ -4,9 +4,9 @@ namespace App\Recipe\Domain\Event;
 
 use App\Shared\Domain\Event\AbstractDomainEvent;
 
-class RecipeWasCreatedEvent extends AbstractDomainEvent
+class RecipeWasUpdatedEvent extends AbstractDomainEvent
 {
-    const EVENT_NAME = 'RecipeWasCreated';
+    const EVENT_NAME = 'RecipeWasUpdated';
 
     private function __construct(
         private string $id,

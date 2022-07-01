@@ -3,21 +3,23 @@
 namespace App\Recipe\Infrastructure\Controller;
 
 use App\Recipe\Application\Command\CreateRecipeCommand;
+use App\Recipe\Application\Command\UpdateRecipeCommand;
 use App\Recipe\Application\Query\GetRecipeQuery;
 use App\Recipe\Application\Query\GetRecipesQuery;
 use App\Recipe\Domain\Exception\RecipeNotFoundException;
+use App\Shared\Domain\Exception\InvalidIdentityException;
+use App\Shared\Domain\Exception\ValidationException;
 use App\Shared\Domain\Identity\IdFactory;
 use App\Shared\Infrastructure\CQRS\CommandBus;
 use App\Shared\Infrastructure\CQRS\QueryBus;
 use App\Shared\Infrastructure\Exception\BadRequestHttpException;
+use App\Shared\Infrastructure\Exception\ResourceNotFoundHttpException;
 use App\Shared\Infrastructure\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use App\Shared\Domain\Exception\ValidationException;
 
 #[Route('/api/recipes', name: 'recipes_')]
 class RecipeApiController
@@ -54,8 +56,8 @@ class RecipeApiController
                 $this->serializer->serialize($recipe, JsonEncoder::FORMAT),
                 Response::HTTP_OK
             );
-        } catch (RecipeNotFoundException $e) {
-            throw new HttpException(Response::HTTP_BAD_REQUEST, $e->getMessage(), $e);
+        } catch (RecipeNotFoundException|InvalidIdentityException $e) {
+            throw ResourceNotFoundHttpException::fromMessage($e->getMessage(), $e);
         }
     }
 
@@ -76,6 +78,25 @@ class RecipeApiController
             throw BadRequestHttpException::fromErrors($e->getMessages(), $e);
         }
 
-        return new JsonResponse(['id' => $recipeId->toString()], Response::HTTP_ACCEPTED);
+        return new JsonResponse(['id' => $recipeId->toString()], Response::HTTP_CREATED);
+    }
+
+    #[Route('/update/{id}', name: 'update', methods: ['PUT'])]
+    public function update(string $id, Request $request): JsonResponse
+    {
+        try {
+            $this->commandBus->dispatch(
+                UpdateRecipeCommand::create(
+                    $id,
+                    $request->request->all()
+                )
+            );
+        } catch (RecipeNotFoundException|InvalidIdentityException $e) {
+            throw ResourceNotFoundHttpException::fromMessage($e->getMessage(), $e);
+        } catch (ValidationException $e) {
+            throw BadRequestHttpException::fromErrors($e->getMessages(), $e);
+        }
+
+        return new JsonResponse(['id' => $id], Response::HTTP_OK);
     }
 }
