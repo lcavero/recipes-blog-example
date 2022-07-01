@@ -22,14 +22,21 @@ class Recipe extends AggregateRoot
     private ?string $description;
     private Collection $ingredients;
 
-    public function __construct(RecipeId $recipeId, string $name, ?string $description)
+    private function __construct(RecipeId $recipeId, string $name, ?string $description, array $ingredients)
     {
-        $this->validate(['name' => $name, 'description' => $description]);
+        $this->validate(['name' => $name, 'description' => $description, 'ingredients' => $ingredients]);
 
         $this->id = $recipeId->toString();
         $this->name = $name;
         $this->description = $description;
         $this->ingredients = new ArrayCollection();
+
+        foreach ($ingredients as $ingredient) {
+            Assertion::isArray($ingredient) && Assertion::keyExists($ingredient, 'description');
+            $this->addIngredient(
+                Ingredient::create($this, IngredientId::fromId(IdFactory::create()), $ingredient['description'])
+            );
+        }
     }
 
     protected function validationConstrains() : Assert\Collection
@@ -43,19 +50,17 @@ class Recipe extends AggregateRoot
                 new Assert\Optional(
                     new Assert\Length(['max' => 1000])
                 )
+            ],
+            'ingredients' => [
+                new Assert\Count(['min' => 1])
             ]
         ]);
     }
 
     public static function create(RecipeId $recipeId, string $name, ?string $description, array $ingredients): static
     {
-        $recipe = new static($recipeId, $name, $description);
-        foreach ($ingredients as $ingredient) {
-            Assertion::isArray($ingredient) && Assertion::keyExists($ingredient, 'description');
-            $recipe->addIngredient(
-                Ingredient::create($recipe, IngredientId::fromId(IdFactory::create()), $ingredient['description'])
-            );
-        }
+        $recipe = new static($recipeId, $name, $description, $ingredients);
+
         $recipe->record(RecipeWasCreatedEvent::create($recipeId->toString(), $name, $description, $recipe->ingredients()));
 
         return $recipe;
@@ -63,13 +68,14 @@ class Recipe extends AggregateRoot
 
     public function update(string $name, ?string $description, array $ingredients): void
     {
-        $this->validate(['name' => $name, 'description' => $description]);
+        $this->validate(['name' => $name, 'description' => $description, 'ingredients' => $ingredients]);
         $this->name = $name;
         $this->description = $description;
 
         foreach ($this->ingredients as $ingredient) {
             $this->removeIngredient($ingredient);
         }
+
 
         foreach ($ingredients as $ingredient) {
             Assertion::isArray($ingredient) && Assertion::keyExists($ingredient, 'description');
@@ -106,12 +112,12 @@ class Recipe extends AggregateRoot
         return $this->ingredients->toArray();
     }
 
-    public function addIngredient(Ingredient $ingredient): void
+    private function addIngredient(Ingredient $ingredient): void
     {
         $this->ingredients->add($ingredient);
     }
 
-    public function removeIngredient(Ingredient $ingredient): void
+    private function removeIngredient(Ingredient $ingredient): void
     {
         $this->ingredients->removeElement($ingredient);
     }
