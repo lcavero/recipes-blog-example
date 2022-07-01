@@ -6,6 +6,7 @@ use App\Recipe\Domain\Event\RecipeWasCreatedEvent;
 use App\Recipe\Domain\Ingredient;
 use App\Recipe\Domain\Recipe;
 use App\Shared\Domain\Exception\DomainValidationException;
+use App\Tests\Recipe\Domain\Mock\RecipeIdMother;
 use Lib\Random\RandomStringGenerator;
 use PHPUnit\Framework\TestCase;
 

@@ -4,6 +4,7 @@ namespace App\Tests\Recipe\Domain;
 
 use App\Recipe\Domain\Event\RecipeWasDeletedEvent;
 use App\Recipe\Domain\Recipe;
+use App\Tests\Recipe\Domain\Mock\RecipeIdMother;
 use PHPUnit\Framework\TestCase;
 
 class DeleteRecipeTest extends TestCase
