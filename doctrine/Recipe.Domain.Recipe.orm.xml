@@ -13,7 +13,7 @@
         <field name="name" column="name" type="string" length="255" nullable="false" unique="false" />
         <field name="description" column="description" type="string" length="1000" nullable="true" unique="false" />
 
-        <one-to-many field="ingredients" target-entity="Ingredient" mapped-by="recipe">
+        <one-to-many field="ingredients" target-entity="Ingredient" mapped-by="recipe" orphan-removal="true">
             <cascade>
                 <cascade-all/>
             </cascade>

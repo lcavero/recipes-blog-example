@@ -34,4 +34,9 @@ class RecipeORMRepository extends ServiceEntityRepository implements RecipeRepos
     {
         return;
     }
+
+    public function delete(Recipe $recipe): void
+    {
+        $this->_em->remove($recipe);
+    }
 }

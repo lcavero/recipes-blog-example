@@ -15,7 +15,7 @@ class RecipeWasUpdatedEvent extends AbstractDomainEvent
         private array $ingredients
     )
     {
-        $this->ingredients = json_decode(json_encode($ingredients));
+        $this->ingredients = json_decode(json_encode($ingredients), true);
         parent::__construct(self::EVENT_NAME);
     }
 

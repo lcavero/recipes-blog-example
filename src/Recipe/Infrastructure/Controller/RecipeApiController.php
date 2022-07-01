@@ -3,6 +3,7 @@
 namespace App\Recipe\Infrastructure\Controller;
 
 use App\Recipe\Application\Command\CreateRecipeCommand;
+use App\Recipe\Application\Command\DeleteRecipeCommand;
 use App\Recipe\Application\Command\UpdateRecipeCommand;
 use App\Recipe\Application\Query\GetRecipeQuery;
 use App\Recipe\Application\Query\GetRecipesQuery;
@@ -98,5 +99,19 @@ class RecipeApiController
         }
 
         return new JsonResponse(['id' => $id], Response::HTTP_OK);
+    }
+
+    #[Route('/delete/{id}', name: 'delete', methods: ['DELETE'])]
+    public function delete(string $id): JsonResponse
+    {
+        try {
+            $this->commandBus->dispatch(
+                DeleteRecipeCommand::create($id)
+            );
+        } catch (RecipeNotFoundException|InvalidIdentityException $e) {
+            throw ResourceNotFoundHttpException::fromMessage($e->getMessage(), $e);
+        }
+
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 }

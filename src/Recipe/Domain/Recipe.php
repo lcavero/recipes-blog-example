@@ -3,6 +3,8 @@
 namespace App\Recipe\Domain;
 
 use App\Recipe\Domain\Event\RecipeWasCreatedEvent;
+use App\Recipe\Domain\Event\RecipeWasDeletedEvent;
+use App\Recipe\Domain\Event\RecipeWasUpdatedEvent;
 use App\Shared\Domain\Aggregate\AggregateRoot;
 use App\Shared\Domain\Identity\IdFactory;
 use App\Shared\Domain\Validation\DomainValidationTrait;
@@ -65,7 +67,9 @@ class Recipe extends AggregateRoot
         $this->name = $name;
         $this->description = $description;
 
-        $this->ingredients->clear();
+        foreach ($this->ingredients as $ingredient) {
+            $this->removeIngredient($ingredient);
+        }
 
         foreach ($ingredients as $ingredient) {
             Assertion::isArray($ingredient) && Assertion::keyExists($ingredient, 'description');
@@ -74,7 +78,12 @@ class Recipe extends AggregateRoot
             );
         }
 
-        $this->record(RecipeWasCreatedEvent::create($this->id, $name, $description, $this->ingredients()));
+        $this->record(RecipeWasUpdatedEvent::create($this->id, $name, $description, $this->ingredients()));
+    }
+
+    public function delete(): void
+    {
+        $this->record(RecipeWasDeletedEvent::create($this->id, $this->name, $this->description, $this->ingredients()));
     }
 
     public function id(): RecipeId

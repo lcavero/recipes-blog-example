@@ -11,4 +11,5 @@ interface RecipeRepository
     public function findOne(RecipeId $recipeId): ?Recipe;
     public function create(Recipe $recipe): void;
     public function update(Recipe $recipe): void;
+    public function delete(Recipe $recipe): void;
 }

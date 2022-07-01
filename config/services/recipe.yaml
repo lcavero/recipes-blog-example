@@ -26,9 +26,15 @@ services:
             tags:
                 - { name: messenger.message_handler, bus: query.bus }
                 
-    App\Recipe\Application\Command\CreateRecipeCommandHandler: ~
     App\Recipe\Application\Query\GetRecipeQueryHandler: ~
     App\Recipe\Application\Query\GetRecipesQueryHandler: ~
+    App\Recipe\Application\Command\CreateRecipeCommandHandler: 
+    App\Recipe\Application\Command\UpdateRecipeCommandHandler: ~
+    App\Recipe\Application\Command\DeleteRecipeCommandHandler: ~
     
     App\Recipe\Application\Service\RecipeCreator:
+        autowire: true
+    App\Recipe\Application\Service\RecipeUpdater:
+        autowire: true
+    App\Recipe\Application\Service\RecipeDeleter:
         autowire: true
