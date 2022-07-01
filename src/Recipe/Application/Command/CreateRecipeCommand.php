@@ -41,13 +41,30 @@ class CreateRecipeCommand implements Command
         return $this->payload['description'] ?? null;
     }
 
+    public function ingredients(): array
+    {
+        return $this->payload['ingredients'] ?? [];
+    }
+
     private function validationConstrains() : Assert\Collection
     {
         return new Assert\Collection([
             'name' => [
                 new Assert\NotBlank(),
             ],
-            'description' => [new Assert\Optional()]
+            'description' => [new Assert\Optional()],
+            'ingredients' => [
+                new Assert\Type('array'),
+                new Assert\Count(['min' => 1]),
+                new Assert\All([
+                    new Assert\Collection([
+                        'description' => [
+                            new Assert\NotBlank(),
+                            new Assert\Type(['type' => 'string'])
+                        ]
+                    ])
+                ])
+            ]
         ]);
     }
 }

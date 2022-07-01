@@ -25,7 +25,7 @@ class Ingredient
     {
         return new Assert\Collection([
             'description' => [
-                new Assert\Length(null, 1, 255)
+                new Assert\Length(['min' => 2, 'max' => 255])
             ]
         ]);
     }

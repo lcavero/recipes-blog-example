@@ -33,11 +33,11 @@ class Recipe extends AggregateRoot
         return new Assert\Collection([
             'name' => [
                 new Assert\NotBlank(),
-                new Assert\Length(null, 1, 255)
+                new Assert\Length(['min' => 1, 'max' => 255])
             ],
             'description' => [
                 new Assert\Optional(
-                    new Assert\Length(null, 0, 1000)
+                    new Assert\Length(['max' => 1000])
                 )
             ]
         ]);

@@ -33,6 +33,11 @@ class Id
         return new static($id);
     }
 
+    public static function fromId(Id $id): static
+    {
+        return new static($id->toString());
+    }
+
     public function value(): Uuid
     {
         return $this->id;
