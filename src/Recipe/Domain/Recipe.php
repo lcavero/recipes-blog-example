@@ -36,7 +36,9 @@ class Recipe extends AggregateRoot
                 new Assert\Length(null, 1, 255)
             ],
             'description' => [
-                new Assert\Length(null, 0, 1000)
+                new Assert\Optional(
+                    new Assert\Length(null, 0, 1000)
+                )
             ]
         ]);
     }

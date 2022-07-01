@@ -47,7 +47,7 @@ class CreateRecipeCommand implements Command
             'name' => [
                 new Assert\NotBlank(),
             ],
-            'description' => []
+            'description' => [new Assert\Optional()]
         ]);
     }
 }
