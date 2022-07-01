@@ -109,7 +109,7 @@ class Recipe extends AggregateRoot
 
     public function ingredients(): array
     {
-        return $this->ingredients->toArray();
+        return array_values($this->ingredients->toArray());
     }
 
     private function addIngredient(Ingredient $ingredient): void
